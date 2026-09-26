@@ -5,6 +5,16 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+// Allow the browser cockpit (opened as a local file, a different origin)
+// to call this API — without this, browsers block the request entirely.
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.sendStatus(200);
+  next();
+});
+
 // In-memory store — fine for a single-cart test setup.
 let latest = { t: 0, b: 0, s: 0, ts: Date.now() };
 
